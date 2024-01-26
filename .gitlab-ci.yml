@@ -1,5 +1,5 @@
 image:
-  name: "homelab/terraform-images:master"
+  name: "registry.int.jrtashjian.com/homelab/terraform-images:master"
 
 testing:
   stage: test
