@@ -5,7 +5,7 @@ testing:
   stage: test
   before_script:
     - while read -r env_var; do
-        export $env_var=$(op read "$(printenv "$env_var")")
+        export $env_var=$(op read "$(printenv "$env_var")");
       done < <(op env ls)
   script:
     - op user get --me
