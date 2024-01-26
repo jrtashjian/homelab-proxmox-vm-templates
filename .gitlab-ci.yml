@@ -1,0 +1,8 @@
+image:
+  name: "$CI_TEMPLATE_REGISTRY_HOST/homelab/terraform-images:master"
+
+testing:
+  stage: test
+  script:
+    - op user get --me
+    - op read "op://homelab/TEST_CREDENTIAL/username"
