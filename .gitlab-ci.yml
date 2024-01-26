@@ -1,5 +1,5 @@
 image:
-  name: "$CI_TEMPLATE_REGISTRY_HOST/homelab/terraform-images:master"
+  name: "$CI_REGISTRY_IMAGE/homelab/terraform-images:master"
 
 testing:
   stage: test
