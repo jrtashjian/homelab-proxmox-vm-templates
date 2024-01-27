@@ -1,6 +1,13 @@
 image:
   name: "registry.int.jrtashjian.com/homelab/terraform-images/releases/1.7:latest"
 
+.nodes:
+  parallel:
+    matrix:
+      - NODE: "pve-node01"
+      - NODE: "pve-node02"
+      - NODE: "pve-node03"
+
 variables:
   ONEPASSWORD_BINARY_VERSION: "2.24.0"
   TF_HTTP_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_ENVIRONMENT_SLUG}"
@@ -27,30 +34,37 @@ stages:
   - deploy
 
 init:
+  extends: .nodes
   stage: prepare
   script:
     - terraform init -input=false
 
 validate:
+  extends: .nodes
   stage: validate
   script:
     - terraform init -input=false
     - terraform validate
 
 plan:
+  extends: .nodes
   stage: build
   script:
     - terraform init -input=false
     - terraform plan -input=false -out=tfplan
     - terraform show -json tfplan > tfplan.json
+  environment:
+      name: "${NODE}"
+      action: prepare
   artifacts:
-    name: "tfplan-${CI_ENVIRONMENT_SLUG}"
+    name: "tfplan-${NODE}"
     paths:
       - tfplan
     reports:
       terraform: tfplan.json
 
 apply:
+  extends: .nodes
   stage: deploy
   script:
     - terraform init -input=false
@@ -58,7 +72,8 @@ apply:
   dependencies:
     - plan
   when: manual
-  # environment:
-  #   name: "${CI_ENVIRONMENT_SLUG}"
+  environment:
+    name: "${NODE}"
+    action: start
   only:
     - master
