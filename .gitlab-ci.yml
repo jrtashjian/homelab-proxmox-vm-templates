@@ -34,11 +34,13 @@ init:
 validate:
   stage: validate
   script:
+    - terraform init -input=false
     - terraform validate
 
 plan:
   stage: build
   script:
+    - terraform init -input=false
     - terraform plan -input=false -out=tfplan
     - terraform show -json tfplan > tfplan.json
   artifacts:
@@ -51,6 +53,7 @@ plan:
 apply:
   stage: deploy
   script:
+    - terraform init -input=false
     - terraform apply -input=false -auto-approve tfplan
   dependencies:
     - plan
