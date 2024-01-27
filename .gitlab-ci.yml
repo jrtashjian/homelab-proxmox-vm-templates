@@ -3,15 +3,59 @@ image:
 
 variables:
   ONEPASSWORD_BINARY_VERSION: "2.24.0"
+  TF_HTTP_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_ENVIRONMENT_SLUG}"
+  TF_HTTP_LOCK_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_ENVIRONMENT_SLUG}/lock"
+  TF_HTTP_LOCK_METHOD: "POST"
+  TF_HTTP_UNLOCK_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_ENVIRONMENT_SLUG}/lock"
+  TF_HTTP_UNLOCK_METHOD: "DELETE"
+  TF_HTTP_USERNAME: "gitlab-ci-token"
+  TF_HTTP_PASSWORD: "${CI_JOB_TOKEN}"
+  TF_HTTP_RETRY_WAIT_MIN: "5"
+  TF_VAR_NODE_NAME: "${CI_ENVIRONMENT_SLUG}"
 
-testing:
-  stage: test
-  before_script:
-    - curl -sLo op.zip "https://cache.agilebits.com/dist/1P/op2/pkg/v${ONEPASSWORD_BINARY_VERSION}/op_linux_amd64_v${ONEPASSWORD_BINARY_VERSION}.zip"
-    - unzip op.zip
-    - rm op.zip
-    - mv ./op /usr/local/bin/op
-    - op --version
+before_script:
+  - curl -sLo op.zip "https://cache.agilebits.com/dist/1P/op2/pkg/v${ONEPASSWORD_BINARY_VERSION}/op_linux_amd64_v${ONEPASSWORD_BINARY_VERSION}.zip"
+  - unzip op.zip
+  - rm op.zip
+  - mv ./op /usr/local/bin/op
+  - op --version
+
+stages:
+  - prepare
+  - validate
+  - build
+  - deploy
+
+init:
+  stage: prepare
   script:
-    - op user get --me
-    - op run -- printenv
+    - terraform init -input=false
+
+validate:
+  stage: validate
+  script:
+    - terraform validate -input=false
+
+plan:
+  stage: build
+  script:
+    - terraform plan -input=false -out=tfplan
+    - terraform show -json tfplan > tfplan.json
+  artifacts:
+    name: "tfplan-${CI_ENVIRONMENT_SLUG}"
+    paths:
+      - tfplan
+    reports:
+      terraform: tfplan.json
+
+apply:
+  stage: deploy
+  script:
+    - terraform apply -input=false -auto-approve tfplan
+  dependencies:
+    - plan
+  when: manual
+  # environment:
+  #   name: "${CI_ENVIRONMENT_SLUG}"
+  only:
+    - master
