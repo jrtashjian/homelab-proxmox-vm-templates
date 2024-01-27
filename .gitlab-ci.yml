@@ -34,7 +34,7 @@ init:
 validate:
   stage: validate
   script:
-    - terraform validate -input=false
+    - terraform validate -backend=false
 
 plan:
   stage: build
