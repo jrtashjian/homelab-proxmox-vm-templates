@@ -5,7 +5,7 @@ image:
   parallel:
     matrix:
       - NODE: "pve-node01"
-        DATASTORE: "local"
+        DATASTORE: "local-lvm"
       - NODE: "pve-node02"
         DATASTORE: "machines"
       - NODE: "pve-node03"
