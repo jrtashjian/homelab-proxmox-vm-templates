@@ -51,7 +51,7 @@ resource "proxmox_virtual_environment_vm" "debian_template" {
   }
 
   disk {
-    datastore_id = "local"
+    datastore_id = var.node_datastore
     file_id      = proxmox_virtual_environment_file.debian_cloud_image.id
     interface    = "scsi0"
     discard      = "on"
