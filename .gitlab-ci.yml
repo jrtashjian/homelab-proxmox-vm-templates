@@ -68,6 +68,7 @@ apply:
 
 destroy:
   extends: .nodes
+  stage: destroy
   script:
     - op run -- terraform destroy -input=false -auto-approve "tfplan-${NODE}"
   dependencies:
