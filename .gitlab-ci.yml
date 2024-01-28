@@ -4,9 +4,7 @@ image:
 .nodes:
   parallel:
     matrix:
-      - NODE: "pve-node01"
-      - NODE: "pve-node02"
-      - NODE: "pve-node03"
+      - NODE: ["pve-node01", "pve-node02", "pve-node03"]
 
 variables:
   ONEPASSWORD_BINARY_VERSION: "2.24.0"
@@ -28,34 +26,18 @@ before_script:
   - op --version
 
 stages:
-  - prepare
-  - validate
-  - build
-  - deploy
-
-init:
-  extends: .nodes
-  stage: prepare
-  script:
-    - terraform init -input=false
-
-validate:
-  extends: .nodes
-  stage: validate
-  script:
-    - terraform init -input=false
-    - terraform validate
+  - plan
+  - apply
 
 plan:
   extends: .nodes
-  stage: build
+  stage: plan
   script:
     - terraform init -input=false
-    - terraform plan -input=false -out=tfplan
-    - terraform show -json tfplan > tfplan.json
+    - op run -- terraform plan -input=false -out=tfplan
+    - op run -- terraform show -json tfplan > tfplan.json
   environment:
       name: "${NODE}"
-      action: prepare
   artifacts:
     name: "tfplan-${NODE}"
     paths:
@@ -65,15 +47,14 @@ plan:
 
 apply:
   extends: .nodes
-  stage: deploy
+  stage: apply
   script:
     - terraform init -input=false
-    - terraform apply -input=false -auto-approve tfplan
+    - op run -- terraform apply -input=false -auto-approve tfplan
   dependencies:
     - plan
   when: manual
   environment:
     name: "${NODE}"
-    action: start
   only:
     - master
