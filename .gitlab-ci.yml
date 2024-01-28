@@ -35,23 +35,23 @@ plan:
   extends: .nodes
   stage: plan
   script:
-    - op run -- terraform plan -input=false -out "tfplan"
-    - op run -- terraform show -json tfplan > tfplan.json
+    - op run -- terraform plan -input=false -out tfplan-${NODE}
+    - op run -- terraform show -json tfplan > tfplan-${NODE}.json
   environment:
       name: "${NODE}"
       action: prepare
   artifacts:
     name: "tfplan-${NODE}"
     paths:
-      - tfplan
+      - tfplan-${NODE}
     reports:
-      terraform: tfplan.json
+      terraform: tfplan-${NODE}.json
 
 apply:
   extends: .nodes
   stage: apply
   script:
-    - op run -- terraform apply -input=false -auto-approve "tfplan"
+    - op run -- terraform apply -input=false -auto-approve tfplan-${NODE}
   dependencies:
     - plan
   environment:
