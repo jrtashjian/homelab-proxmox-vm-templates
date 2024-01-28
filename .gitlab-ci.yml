@@ -35,7 +35,7 @@ plan:
   extends: .nodes
   stage: plan
   script:
-    - op run -- terraform plan -input=false -out=tfplan
+    - op run -- terraform plan -input=false -out "tfplan"
     - op run -- terraform show -json tfplan > tfplan.json
   environment:
       name: "${NODE}"
@@ -51,7 +51,7 @@ apply:
   extends: .nodes
   stage: apply
   script:
-    - op run -- terraform apply -input=false -auto-approve tfplan
+    - op run -- terraform apply -input=false -auto-approve "tfplan"
   dependencies:
     - plan
   environment:
