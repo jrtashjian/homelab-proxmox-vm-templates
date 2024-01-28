@@ -24,7 +24,8 @@ before_script:
   - rm op.zip
   - mv ./op /usr/local/bin/op
   - op --version
-  - printenv
+  - terraform --version
+  - terraform init -input=false
 
 stages:
   - plan
@@ -34,7 +35,6 @@ plan:
   extends: .nodes
   stage: plan
   script:
-    - terraform init -input=false
     - op run -- terraform plan -input=false -out=tfplan
     - op run -- terraform show -json tfplan > tfplan.json
   environment:
@@ -51,11 +51,9 @@ apply:
   extends: .nodes
   stage: apply
   script:
-    - terraform init -input=false
     - op run -- terraform apply -input=false -auto-approve tfplan
   dependencies:
     - plan
-  when: manual
   environment:
     name: "${NODE}"
     action: start
