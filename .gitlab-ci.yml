@@ -64,3 +64,14 @@ apply:
   only:
     - master
   when: manual
+
+destroy:
+  extends: .nodes
+  script:
+    - op run -- terraform destroy -input=false -auto-approve "tfplan-${NODE}"
+  dependencies:
+    - apply
+  environment:
+    name: "${NODE}"
+    action: stop
+  when: manual
