@@ -39,6 +39,7 @@ plan:
     - op run -- terraform show -json tfplan > tfplan.json
   environment:
       name: "${NODE}"
+      action: prepare
   artifacts:
     name: "tfplan-${NODE}"
     paths:
@@ -57,5 +58,6 @@ apply:
   when: manual
   environment:
     name: "${NODE}"
+    action: start
   only:
     - master
