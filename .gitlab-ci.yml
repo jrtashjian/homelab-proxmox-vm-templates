@@ -24,6 +24,7 @@ before_script:
   - rm op.zip
   - mv ./op /usr/local/bin/op
   - op --version
+  - printenv
 
 stages:
   - plan
