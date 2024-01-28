@@ -36,7 +36,7 @@ plan:
   stage: plan
   script:
     - op run -- terraform plan -input=false -out "tfplan-${NODE}"
-    - op run -- terraform show -json tfplan > "tfplan-${NODE}.json"
+    - op run -- terraform show -json "tfplan-${NODE}" > "tfplan-${NODE}.json"
   environment:
       name: "${NODE}"
       action: prepare
