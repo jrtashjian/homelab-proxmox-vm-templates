@@ -41,9 +41,12 @@ stages:
 plan:
   extends: .nodes
   stage: plan
+  before_script:
+    - apk --no-cache add jq
+    - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
   script:
     - op run -- terraform plan -input=false -out "tfplan-${NODE}"
-    - op run -- terraform show -json "tfplan-${NODE}" > "tfplan-${NODE}.json"
+    - op run -- terraform show -json "tfplan-${NODE}" | convert_report > "tfplan-${NODE}.json"
   environment:
       name: "${NODE}"
       action: prepare
@@ -66,3 +69,4 @@ apply:
     action: start
   only:
     - master
+  when: manual
