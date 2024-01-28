@@ -16,6 +16,7 @@ variables:
   TF_HTTP_USERNAME: "gitlab-ci-token"
   TF_HTTP_PASSWORD: "${CI_JOB_TOKEN}"
   TF_HTTP_RETRY_WAIT_MIN: "5"
+  PROXMOX_VE_ENDPOINT: "${$CI_ENVIRONMENT_URL}"
   TF_VAR_node_name: "${CI_ENVIRONMENT_SLUG}"
 
 before_script:
