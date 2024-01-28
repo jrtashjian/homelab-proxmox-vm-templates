@@ -3,6 +3,12 @@ variable "node_name" {
   type        = string
 }
 
+variable "node_datastore" {
+  description = "proxmox node default datastore"
+  type        = string
+  default     = "local-zfs"
+}
+
 variable "ansible_user" {
   description = "Ansible user"
   type        = string

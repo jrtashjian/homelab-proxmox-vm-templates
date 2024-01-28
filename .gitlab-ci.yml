@@ -4,7 +4,12 @@ image:
 .nodes:
   parallel:
     matrix:
-      - NODE: ["pve-node01", "pve-node02", "pve-node03"]
+      - NODE: "pve-node01"
+        DATASTORE: "local"
+      - NODE: "pve-node02"
+        DATASTORE: "machines"
+      - NODE: "pve-node03"
+        DATASTORE: "machines"
 
 variables:
   ONEPASSWORD_BINARY_VERSION: "2.24.0"
@@ -18,6 +23,7 @@ variables:
   TF_HTTP_RETRY_WAIT_MIN: "5"
   PROXMOX_VE_ENDPOINT: "${$CI_ENVIRONMENT_URL}"
   TF_VAR_node_name: "${CI_ENVIRONMENT_SLUG}"
+  TF_VAR_node_datastore: "${DATASTORE}"
 
 before_script:
   - curl -sLo op.zip "https://cache.agilebits.com/dist/1P/op2/pkg/v${ONEPASSWORD_BINARY_VERSION}/op_linux_amd64_v${ONEPASSWORD_BINARY_VERSION}.zip"

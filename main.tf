@@ -72,7 +72,7 @@ resource "proxmox_virtual_environment_vm" "debian_template" {
   serial_device {}
 
   initialization {
-    datastore_id = "machines"
+    datastore_id = var.node_datastore
 
     user_account {
       username = var.ansible_user
