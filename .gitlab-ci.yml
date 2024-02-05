@@ -27,7 +27,6 @@ before_script:
   - mv ./op /usr/local/bin/op
   - op --version
   - terraform --version
-  - printenv
 
 stages:
   - validate
@@ -38,27 +37,43 @@ stages:
 fmt:
   extends:
     - .terraform:fmt
-    - .nodes
   needs: []
 
 validate:
   extends:
     - .terraform:validate
-    - .nodes
   needs: []
 
 build:
   extends:
     - .terraform:build
     - .nodes
+  script:
+    - op run -- gitlab-terraform plan
+    - op run -- gitlab-terraform plan-json
   environment:
     name: $TF_STATE_NAME
     action: prepare
+
+deploy:
+  extends:
+    - .terraform:deploy
+    - .nodes
+  dependencies:
+    - build
+  script:
+    - op run -- gitlab-terraform apply
+  environment:
+    name: $TF_STATE_NAME
+    action: start
+
 
 cleanup:
   extends:
     - .terraform:destroy
     - .nodes
+  script:
+    - op run -- gitlab-terraform destroy
   environment:
     name: $TF_STATE_NAME
     action: stop
