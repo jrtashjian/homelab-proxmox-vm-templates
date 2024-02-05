@@ -74,7 +74,6 @@ deploy:
     name: $TF_STATE_NAME
     url: $PROXMOX_VE_ENDPOINT
     action: start
-    on_stop: "cleanup: [$TF_STATE_NAME, $TF_VAR_node_datastore]"
 
 cleanup:
   extends:
