@@ -28,7 +28,7 @@ before_script:
   - mv ./op /usr/local/bin/op
   - op --version
   - terraform --version
-  - terraform init -input=false
+  - printenv
 
 stages:
   - validate
@@ -53,7 +53,7 @@ build:
     - .terraform:build
     - .nodes
   environment:
-    name: "${TF_STATE_NAME}"
+    name: $TF_STATE_NAME
     action: prepare
 
 cleanup:
@@ -61,5 +61,5 @@ cleanup:
     - .terraform:destroy
     - .nodes
   environment:
-    name: "${TF_STATE_NAME}"
+    name: $TF_STATE_NAME
     action: stop
