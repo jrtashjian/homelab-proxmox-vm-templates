@@ -56,6 +56,11 @@ build:
   environment:
     name: $TF_STATE_NAME
     action: prepare
+  artifacts:
+    paths:
+      - "${TF_PLAN_CACHE}"
+    reports:
+      terraform: "${TF_PLAN_JSON}"
 
 deploy:
   extends:
