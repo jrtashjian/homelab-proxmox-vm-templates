@@ -36,11 +36,15 @@ stages:
   - cleanup
 
 fmt:
-  extends: .terraform:fmt
+  extends:
+    - .terraform:fmt
+    - .nodes
   needs: []
 
 validate:
-  extends: .terraform:validate
+  extends:
+    - .terraform:validate
+    - .nodes
   needs: []
 
 build:
