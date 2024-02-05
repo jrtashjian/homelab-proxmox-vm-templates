@@ -6,7 +6,6 @@ provider "proxmox" {
   }
 }
 
-
 resource "proxmox_virtual_environment_file" "debian_cloud_image" {
   node_name = var.node_name
 
@@ -35,7 +34,7 @@ resource "proxmox_virtual_environment_file" "debian_vendor_config" {
 
 resource "proxmox_virtual_environment_vm" "debian_template" {
   node_name = var.node_name
-  name      = "cloudinit-debian-12-gitlab"
+  name      = "cloudinit-debian-12"
   template  = true
 
   agent {
