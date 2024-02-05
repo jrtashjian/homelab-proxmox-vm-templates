@@ -8,16 +8,17 @@ image:
 .nodes:
   parallel:
     matrix:
-      - TF_STATE_NAME: "pve-node01"
+      - NODE: "pve-node01"
         TF_VAR_node_datastore: "local-lvm"
-      - TF_STATE_NAME: "pve-node02"
+      - NODE: "pve-node02"
         TF_VAR_node_datastore: "machines"
-      - TF_STATE_NAME: "pve-node03"
+      - NODE: "pve-node03"
         TF_VAR_node_datastore: "machines"
 
 variables:
   ONEPASSWORD_BINARY_VERSION: "2.24.0"
   PROXMOX_VE_ENDPOINT: "https://${TF_STATE_NAME}.int.jrtashjian.com:8006"
+  TF_STATE_NAME: "${NODE}"
   TF_VAR_node_name: "${TF_STATE_NAME}"
 
 before_script:
