@@ -18,6 +18,8 @@ image:
 variables:
   ONEPASSWORD_BINARY_VERSION: "2.24.0"
   PROXMOX_VE_ENDPOINT: "https://${TF_STATE_NAME}.int.jrtashjian.com:8006/"
+  TF_PLAN_CACHE: "${TF_STATE_NAME}-plan.cache"
+  TF_PLAN_JSON: "${TF_STATE_NAME}-plan.json"
   TF_VAR_node_name: "${TF_STATE_NAME}"
 
 before_script:
