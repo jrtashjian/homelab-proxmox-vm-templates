@@ -72,8 +72,9 @@ deploy:
     - op run -- gitlab-terraform apply
   environment:
     name: $TF_STATE_NAME
+    url: $PROXMOX_VE_ENDPOINT
     action: start
-
+    on_stop: cleanup
 
 cleanup:
   extends:
