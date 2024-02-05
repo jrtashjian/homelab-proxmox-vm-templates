@@ -15,8 +15,8 @@ resource "proxmox_virtual_environment_file" "debian_cloud_image" {
 
   source_file {
     # Obtain with: `shasum -a256 debian-12-genericcloud-amd64.qcow2`
-    checksum  = "ef9270aee834900d5195b257d7580dc96483a298bf54e5c0555385dc23036e90"
-    path      = "https://cloud.debian.org/images/cloud/bookworm/20240102-1614/debian-12-genericcloud-amd64-20240102-1614.qcow2"
+    checksum  = "26134ae15e6ea7158f252a1b96cb20e0c0a8079f9760c5875d816f80716d9124"
+    path      = "https://cloud.debian.org/images/cloud/bookworm/20240201-1644/debian-12-genericcloud-amd64-20240201-1644.qcow2"
     file_name = "debian-12-genericcloud-amd64.img"
   }
 }
