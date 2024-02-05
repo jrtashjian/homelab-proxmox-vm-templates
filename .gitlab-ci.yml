@@ -1,29 +1,24 @@
+include:
+  - project: 'homelab/terraform-images'
+    file: '/templates/Base.gitlab-ci.yml'
+
 image:
-  name: "registry.int.jrtashjian.com/homelab/terraform-images/releases/1.7:latest"
+  name: "$CI_REGISTRY/homelab/terraform-images/releases/terraform:1.7.2"
 
 .nodes:
   parallel:
     matrix:
-      - NODE: "pve-node01"
-        DATASTORE: "local-lvm"
-      - NODE: "pve-node02"
-        DATASTORE: "machines"
-      - NODE: "pve-node03"
-        DATASTORE: "machines"
+      - TF_STATE_NAME: "pve-node01"
+        TF_VAR_node_datastore: "local-lvm"
+      - TF_STATE_NAME: "pve-node02"
+        TF_VAR_node_datastore: "machines"
+      - TF_STATE_NAME: "pve-node03"
+        TF_VAR_node_datastore: "machines"
 
 variables:
   ONEPASSWORD_BINARY_VERSION: "2.24.0"
-  TF_HTTP_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_ENVIRONMENT_SLUG}"
-  TF_HTTP_LOCK_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_ENVIRONMENT_SLUG}/lock"
-  TF_HTTP_LOCK_METHOD: "POST"
-  TF_HTTP_UNLOCK_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_ENVIRONMENT_SLUG}/lock"
-  TF_HTTP_UNLOCK_METHOD: "DELETE"
-  TF_HTTP_USERNAME: "gitlab-ci-token"
-  TF_HTTP_PASSWORD: "${CI_JOB_TOKEN}"
-  TF_HTTP_RETRY_WAIT_MIN: "5"
-  PROXMOX_VE_ENDPOINT: "${CI_ENVIRONMENT_URL}"
-  TF_VAR_node_name: "${CI_ENVIRONMENT_SLUG}"
-  TF_VAR_node_datastore: "${DATASTORE}"
+  PROXMOX_VE_ENDPOINT: "https://${TF_STATE_NAME}.int.jrtashjian.com:8006"
+  TF_VAR_node_name: "${TF_STATE_NAME}"
 
 before_script:
   - curl -sLo op.zip "https://cache.agilebits.com/dist/1P/op2/pkg/v${ONEPASSWORD_BINARY_VERSION}/op_linux_amd64_v${ONEPASSWORD_BINARY_VERSION}.zip"
@@ -35,45 +30,31 @@ before_script:
   - terraform init -input=false
 
 stages:
-  - plan
-  - apply
-  - destroy
+  - validate
+  - build
+  - deploy
+  - cleanup
 
-plan:
-  extends: .nodes
-  stage: plan
-  script:
-    - op run -- terraform plan -input=false -out "tfplan-${NODE}"
-  environment:
-      name: "${NODE}"
-      action: prepare
-  artifacts:
-    name: "tfplan-${NODE}"
-    paths:
-      - "tfplan-${NODE}"
+fmt:
+  extends: .terraform:fmt
+  needs: []
 
-apply:
-  extends: .nodes
-  stage: apply
-  script:
-    - op run -- terraform apply -input=false -auto-approve "tfplan-${NODE}"
-  dependencies:
-    - plan
-  environment:
-    name: "${NODE}"
-    action: start
-  only:
-    - master
-  when: manual
+validate:
+  extends: .terraform:validate
+  needs: []
 
-destroy:
-  extends: .nodes
-  stage: destroy
-  script:
-    - op run -- terraform destroy -input=false -auto-approve "tfplan-${NODE}"
-  dependencies:
-    - apply
+build:
+  extends:
+    - .terraform:build
+    - .nodes
   environment:
-    name: "${NODE}"
+    name: "${TF_STATE_NAME}"
+    action: prepare
+
+cleanup:
+  extends:
+    - .terraform:destroy
+    - .nodes
+  environment:
+    name: "${TF_STATE_NAME}"
     action: stop
-  when: manual
