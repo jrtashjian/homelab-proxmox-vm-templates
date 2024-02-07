@@ -1,0 +1,3 @@
+# Proxmox VM Template Terraform Configuration
+
+The configuration in this repository creates a VM template named `cloudinit-debian-{release}` on a specified Proxmox node. The VM is configured with various settings, including the operating system type, CPU type, disk configuration, network device, VGA type, and initialization settings. Additionally, the VM is set up to use the QEMU Guest Agent for enhanced functionality.
