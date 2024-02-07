@@ -31,7 +31,6 @@ stages:
   - validate
   - build
   - deploy
-  - cleanup
 
 fmt:
   extends:
@@ -71,13 +70,3 @@ deploy:
     name: $TF_STATE_NAME
     url: $PROXMOX_VE_ENDPOINT
     action: start
-
-cleanup:
-  extends:
-    - .terraform:destroy
-    - .nodes
-  script:
-    - op run -- gitlab-terraform destroy
-  environment:
-    name: $TF_STATE_NAME
-    action: stop
