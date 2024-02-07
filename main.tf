@@ -8,15 +8,15 @@ provider "proxmox" {
 
 locals {
   datastore_iso = data.proxmox_virtual_environment_datastores.datastores.datastore_ids[
-    index([for v in data.proxmox_virtual_environment_datastores.datastores.content_types: contains(v, "iso")], true)
+    index([for v in data.proxmox_virtual_environment_datastores.datastores.content_types : contains(v, "iso")], true)
   ]
 
   datastore_snippets = data.proxmox_virtual_environment_datastores.datastores.datastore_ids[
-    index([for v in data.proxmox_virtual_environment_datastores.datastores.content_types: contains(v, "snippets")], true)
+    index([for v in data.proxmox_virtual_environment_datastores.datastores.content_types : contains(v, "snippets")], true)
   ]
 
   datastore_images = data.proxmox_virtual_environment_datastores.datastores.datastore_ids[
-    index([for v in data.proxmox_virtual_environment_datastores.datastores.content_types: contains(v, "images")], true)
+    index([for v in data.proxmox_virtual_environment_datastores.datastores.content_types : contains(v, "images")], true)
   ]
 }
 
