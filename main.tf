@@ -6,11 +6,25 @@ provider "proxmox" {
   }
 }
 
+locals {
+  datastore_iso = data.proxmox_virtual_environment_datastores.datastores.datastore_ids[
+    index([for v in data.proxmox_virtual_environment_datastores.datastores.content_types: contains(v, "iso")], true)
+  ]
+
+  datastore_snippets = data.proxmox_virtual_environment_datastores.datastores.datastore_ids[
+    index([for v in data.proxmox_virtual_environment_datastores.datastores.content_types: contains(v, "snippets")], true)
+  ]
+
+  datastore_images = data.proxmox_virtual_environment_datastores.datastores.datastore_ids[
+    index([for v in data.proxmox_virtual_environment_datastores.datastores.content_types: contains(v, "images")], true)
+  ]
+}
+
 resource "proxmox_virtual_environment_file" "debian_cloud_image" {
   node_name = var.node_name
 
   content_type = "iso"
-  datastore_id = "local"
+  datastore_id = local.datastore_iso
 
   source_file {
     # Obtain with: `shasum -a256 debian-12-genericcloud-amd64.qcow2`
@@ -24,7 +38,7 @@ resource "proxmox_virtual_environment_file" "debian_vendor_config" {
   node_name = var.node_name
 
   content_type = "snippets"
-  datastore_id = "local"
+  datastore_id = local.datastore_snippets
 
   source_raw {
     data      = file("debian-vendor-config.yml")
@@ -50,7 +64,7 @@ resource "proxmox_virtual_environment_vm" "debian_template" {
   }
 
   disk {
-    datastore_id = var.node_datastore
+    datastore_id = local.datastore_images
     file_id      = proxmox_virtual_environment_file.debian_cloud_image.id
     interface    = "scsi0"
     discard      = "on"
@@ -71,7 +85,7 @@ resource "proxmox_virtual_environment_vm" "debian_template" {
   serial_device {}
 
   initialization {
-    datastore_id = var.node_datastore
+    datastore_id = local.datastore_images
 
     user_account {
       username = var.ansible_user
@@ -87,4 +101,8 @@ resource "proxmox_virtual_environment_vm" "debian_template" {
 
     vendor_data_file_id = proxmox_virtual_environment_file.debian_vendor_config.id
   }
+}
+
+data "proxmox_virtual_environment_datastores" "datastores" {
+  node_name = var.node_name
 }
