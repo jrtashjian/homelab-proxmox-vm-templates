@@ -24,18 +24,16 @@ locals {
   ]
 }
 
-resource "proxmox_virtual_environment_file" "debian_container_template" {
+resource "proxmox_virtual_environment_download_file" "debian_container_template" {
   node_name = var.node_name
 
   content_type = "vztmpl"
   datastore_id = local.datastore_container_templates
 
-  source_file {
-    path = "http://download.proxmox.com/images/system/debian-12-standard_12.2-1_amd64.tar.zst"
-  }
+  url = "http://download.proxmox.com/images/system/debian-12-standard_12.2-1_amd64.tar.zst"
 }
 
-resource "proxmox_virtual_environment_download_file" "debian_12_bookworm_cloud_image" {
+resource "proxmox_virtual_environment_download_file" "debian_cloud_image" {
   node_name = var.node_name
 
   content_type = "iso"
@@ -46,21 +44,7 @@ resource "proxmox_virtual_environment_download_file" "debian_12_bookworm_cloud_i
   checksum           = "6856277491c234fa1bc6f250cbd9f0d44f77524479536ecbc0ac536bc07e76322ebb4d42e09605056d6d3879c8eb87db40690a2b5dfe57cb19b0c673fc4c58ca"
   checksum_algorithm = "sha512"
 
-  file_name = "debian-12-bookworm-genericcloud-amd64.img"
-}
-
-resource "proxmox_virtual_environment_file" "debian_cloud_image" {
-  node_name = var.node_name
-
-  content_type = "iso"
-  datastore_id = local.datastore_iso
-
-  source_file {
-    # Obtain with: `shasum -a256 debian-12-genericcloud-amd64.qcow2`
-    checksum  = "26134ae15e6ea7158f252a1b96cb20e0c0a8079f9760c5875d816f80716d9124"
-    path      = "https://cloud.debian.org/images/cloud/bookworm/20240201-1644/debian-12-genericcloud-amd64-20240201-1644.qcow2"
-    file_name = "debian-12-genericcloud-amd64.img"
-  }
+  file_name = "debian-12-genericcloud-amd64.img"
 }
 
 resource "proxmox_virtual_environment_file" "debian_vendor_config" {
@@ -94,7 +78,7 @@ resource "proxmox_virtual_environment_vm" "debian_template" {
 
   disk {
     datastore_id = local.datastore_images
-    file_id      = proxmox_virtual_environment_file.debian_cloud_image.id
+    file_id      = proxmox_virtual_environment_download_file.debian_cloud_image.id
     interface    = "scsi0"
     discard      = "on"
     iothread     = true
