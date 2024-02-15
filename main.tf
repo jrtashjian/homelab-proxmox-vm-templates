@@ -18,6 +18,21 @@ locals {
   datastore_images = data.proxmox_virtual_environment_datastores.datastores.datastore_ids[
     index([for v in data.proxmox_virtual_environment_datastores.datastores.content_types : contains(v, "images")], true)
   ]
+
+  datastore_container_templates = data.proxmox_virtual_environment_datastores.datastores.datastore_ids[
+    index([for v in data.proxmox_virtual_environment_datastores.datastores.content_types : contains(v, "vztmpl")], true)
+  ]
+}
+
+resource "proxmox_virtual_environment_file" "debian_container_template" {
+  node_name    = var.node_name
+
+  content_type = "vztmpl"
+  datastore_id = local.datastore_container_templates
+
+  source_file {
+    path = "http://download.proxmox.com/images/system/debian-12-standard_12.2-1_amd64.tar.zst"
+  }
 }
 
 resource "proxmox_virtual_environment_file" "debian_cloud_image" {
