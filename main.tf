@@ -25,7 +25,7 @@ locals {
 }
 
 resource "proxmox_virtual_environment_file" "debian_container_template" {
-  node_name    = var.node_name
+  node_name = var.node_name
 
   content_type = "vztmpl"
   datastore_id = local.datastore_container_templates
@@ -33,6 +33,20 @@ resource "proxmox_virtual_environment_file" "debian_container_template" {
   source_file {
     path = "http://download.proxmox.com/images/system/debian-12-standard_12.2-1_amd64.tar.zst"
   }
+}
+
+resource "proxmox_virtual_environment_download_file" "debian_12_bookworm_cloud_image" {
+  node_name = var.node_name
+
+  content_type = "iso"
+  datastore_id = local.datastore_iso
+
+  url = "https://cloud.debian.org/images/cloud/bookworm/20240211-1654/debian-12-genericcloud-amd64-20240211-1654.qcow2"
+
+  checksum           = "6856277491c234fa1bc6f250cbd9f0d44f77524479536ecbc0ac536bc07e76322ebb4d42e09605056d6d3879c8eb87db40690a2b5dfe57cb19b0c673fc4c58ca"
+  checksum_algorithm = "sha512"
+
+  file_name = "debian-12-bookworm-genericcloud-amd64.img"
 }
 
 resource "proxmox_virtual_environment_file" "debian_cloud_image" {
