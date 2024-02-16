@@ -8,9 +8,7 @@ image:
 .nodes:
   parallel:
     matrix:
-      - TF_STATE_NAME: "pve-node01"
-      - TF_STATE_NAME: "pve-node02"
-      - TF_STATE_NAME: "pve-node03"
+      - TF_STATE_NAME: "pve-node01 pve-node02 pve-node03"
 
 variables:
   ONEPASSWORD_BINARY_VERSION: "2.24.0"
