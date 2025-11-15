@@ -30,7 +30,7 @@ resource "proxmox_virtual_environment_download_file" "debian_container_template"
   content_type = "vztmpl"
   datastore_id = local.datastore_container_templates
 
-  url = "http://download.proxmox.com/images/system/debian-12-standard_12.2-1_amd64.tar.zst"
+  url = "http://download.proxmox.com/images/system/debian-13-standard_13.1-2_amd64.tar.zst"
 }
 
 resource "proxmox_virtual_environment_download_file" "debian_cloud_image" {
@@ -39,9 +39,9 @@ resource "proxmox_virtual_environment_download_file" "debian_cloud_image" {
   content_type = "iso"
   datastore_id = local.datastore_iso
 
-  url = "https://cloud.debian.org/images/cloud/bookworm/20240211-1654/debian-12-genericcloud-amd64-20240211-1654.qcow2"
+  url = "https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2"
 
-  checksum           = "6856277491c234fa1bc6f250cbd9f0d44f77524479536ecbc0ac536bc07e76322ebb4d42e09605056d6d3879c8eb87db40690a2b5dfe57cb19b0c673fc4c58ca"
+  checksum           = "0e176b990f0685a03755b209f2841d391a86528a0b0ba40014ae34a170a755a45619da5b38b78d7b08770790ecfa517bef855b41feacfdc374bb22a4613383b4"
   checksum_algorithm = "sha512"
 
   file_name = "debian-12-genericcloud-amd64.img"
