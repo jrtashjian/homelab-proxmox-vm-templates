@@ -41,10 +41,10 @@ resource "proxmox_virtual_environment_download_file" "debian_cloud_image" {
 
   url = "https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2"
 
-  checksum           = "0e176b990f0685a03755b209f2841d391a86528a0b0ba40014ae34a170a755a45619da5b38b78d7b08770790ecfa517bef855b41feacfdc374bb22a4613383b4"
+  checksum           = "aa1963a7356a7fab202e5eebc0c1954c4cbd4906e3d8e9bf993beb22e0a90cd7fe644bd5e0fb5ec4b9fbea16744c464fda34ef1be5c3532897787d16c7211f86"
   checksum_algorithm = "sha512"
 
-  file_name = "debian-12-genericcloud-amd64.img"
+  file_name = "debian-13-genericcloud-amd64.img"
 }
 
 resource "proxmox_virtual_environment_file" "debian_vendor_config" {
@@ -61,7 +61,7 @@ resource "proxmox_virtual_environment_file" "debian_vendor_config" {
 
 resource "proxmox_virtual_environment_vm" "debian_template" {
   node_name = var.node_name
-  name      = "cloudinit-debian-12"
+  name      = "cloudinit-debian-13"
   template  = true
 
   agent {
