@@ -41,7 +41,7 @@ resource "proxmox_virtual_environment_download_file" "debian_cloud_image" {
 
   url = "https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2"
 
-  checksum           = "0e5edfbe49b0cca779a4a7dc9738f34c92e3ff481ee1f7d5c4e93e180654fe275eb8c96397224c6ca04a2910eaaed27489f431573ebe4cb5412ef257888b2b18"
+  checksum           = "77429b411b39b43f914dc9d14bf34aa315489a1a12b5429f72e5b483bdda23c65698d33443c85d3f3ad7c3a0828ae60845406d6b99646342554d17abae29c2a3"
   checksum_algorithm = "sha512"
 
   file_name = "debian-13-genericcloud-amd64.img"
